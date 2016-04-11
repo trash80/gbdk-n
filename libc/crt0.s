@@ -21,7 +21,7 @@
 	ldh	a,(0x01)
 	ld	(HL),A
 	ld	a,#0x80		; \ Reset IO register
-	ldh	(0x01),a	; /
+	ldh	(0x02),a	; /
 	POP	AF
 	POP	HL
 	reti
@@ -729,18 +729,12 @@ banked_ret::
 
 	.area	_SFR (ABS)
 	.org	0xce00
-_serialBuffer::
-	.ds	256
-
-
-	.area	_HEAP
 _serialBufferPosition::
 	.ds	1
-
-
-	.area	_HEAP
 _serialBufferReadPosition::
 	.ds	1
+_serialBuffer::
+	.ds	256
 
 
 	.area	_HEAP
