@@ -734,6 +734,11 @@ _serialBuffer::
 
 
 	.area	_HEAP
+_serialBufferPosition::
+	.ds	1
+
+
+	.area	_HEAP
 _malloc_heap_start::
 
 
