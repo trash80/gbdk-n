@@ -250,11 +250,11 @@
 ;	LD	(_malloc_heap_start+0),A
 ;	LD	(_malloc_heap_start+1),A
 ;	LD	(.sys_time+0),A	; Zero the system clock
-;	LD	(.sys_time+1),A	
+;	LD	(.sys_time+1),A
 
 	call	gsinit
 
-;	CALL	.init		
+;	CALL	.init
 
 	EI			; Enable interrupts
 
@@ -266,7 +266,7 @@
 	.else
 	.dw	1
 	.endif
-_exit::	
+_exit::
 99$:
 	HALT
 	JR	99$		; Wait forever
@@ -331,7 +331,7 @@ _sys_time::
 gsinit::
 	.area	_GSINITTAIL
 	ret
-	
+
 	.area	_HOME
 	;; Call the initialization function for the mode specified in HL
 .set_mode::
@@ -419,7 +419,7 @@ gsinit::
 	OR	B
 	RET	Z
 	JR	2$
-	
+
 	;; Add interrupt routine in BC to the interrupt list in HL
 .add_int::
 1$:
@@ -434,7 +434,7 @@ gsinit::
 	LD	(HL),C
 	RET
 
-	
+
 	;; VBlank interrupt
 .vbl:
 	LD	HL,#.sys_time
@@ -442,7 +442,7 @@ gsinit::
 	JR	NZ,2$
 	INC	HL
 	INC	(HL)
-2$:	
+2$:
 	CALL	.refresh_OAM
 
 	LD	A,#0x01
@@ -478,7 +478,7 @@ _display_off::
 	LDH	A,(.LCDC)
 	ADD	A
 	RET	NC		; Return if screen is off
-1$:				; We wait for the *NEXT* VBL 
+1$:				; We wait for the *NEXT* VBL
 	LDH	A,(.LY)
 	CP	#0x92		; Smaller than or equal to 0x91?
 	JR	NC,1$		; Loop until smaller than or equal to 0x91
@@ -552,7 +552,7 @@ _get_mode::
 	LD	HL,#.mode
 	LD	E,(HL)
 	RET
-	
+
 _enable_interrupts::
 	EI
 	RET
@@ -625,7 +625,7 @@ _remove_JOY::
 	CALL	.remove_JOY
 	POP	BC
 	RET
-	
+
 _add_VBL::
 	PUSH	BC
 	LDA	HL,4(SP)	; Skip return address and registers
@@ -729,15 +729,19 @@ banked_ret::
 
 	.area	_SFR (ABS)
 	.org	0xce00
-_serialBufferPosition::
-	.ds	1
-_serialBufferReadPosition::
-	.ds	1
 _serialBuffer::
 	.ds	256
 
 
 	.area	_HEAP
+_serialBufferPosition::
+	.ds	1
+
+
+	.area	_HEAP
+_serialBufferReadPosition::
+	.ds	1
+
+
+	.area	_HEAP
 _malloc_heap_start::
-
-
