@@ -11,9 +11,24 @@
 	.org	0x00
 	RET			; Empty function (default for interrupts)
 
-	.org	0x10
-	.byte	0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01
-	.byte	0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80
+	.org	0x01
+
+.siohandler:
+	ld	HL,#_serialBufferPosition
+	inc	(HL)
+	ld	L,(HL)
+	ld	H,#>_serialBuffer
+	ldh	a,(0x01)
+	ld	(HL),A
+	ld	a,#0x80		; \ Reset IO register
+	ldh	(0x01),a	; /
+	POP	AF
+	POP	HL
+	reti
+
+;	.org	0x10
+;	.byte	0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01
+;	.byte	0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80
 
 	;; Interrupt vectors
 	.org	0x40		; VBL
@@ -37,8 +52,8 @@
 	.org	0x58		; SIO
 .int_SIO:
 	PUSH	HL
-	LD	HL,#.int_0x58
-	JP	.int
+	PUSH	AF
+	jr	.siohandler
 
 	.org	0x60		; JOY
 .int_JOY:
@@ -710,6 +725,15 @@ banked_ret::
 	ld	(.MBC1_ROM_PAGE),a
 	ld	(__current_bank),a
 	jp	(hl)
-		
+
+
+	.area	_SFR (ABS)
+	.org	0xce00
+_serialBuffer::
+	.ds	256
+
+
 	.area	_HEAP
 _malloc_heap_start::
+
+
